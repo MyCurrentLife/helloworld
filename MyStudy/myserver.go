@@ -16,9 +16,8 @@ type Order struct {
 }
 
 const fileName string = "Orders.txt"
-const statusOk int = 200
-const statusServerError int = 500
-const statusClientError int = 400
+
+const statusServerError = 500
 
 func main() {
 	http.HandleFunc("/health", GetStatus)
@@ -106,7 +105,7 @@ func ConfirmOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(statusServerError)
 	}
 	//вторая часть - работа с данными
-	err = findIdAndEditStatus(OrderDataBase, intId, "Confirm")
+	err = FindIdAndEditStatus(OrderDataBase, intId, "Confirm")
 
 	if err.Error() == "Всё плохо!" {
 		fmt.Fprintf(w, "id is missing")
@@ -141,9 +140,9 @@ func CancelOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(statusServerError)
 	}
 
-	err = json.Unmarshal(b, &OrderDataBase)
+	_ = json.Unmarshal(b, &OrderDataBase)
 	//вторая часть - работа с данными
-	err = findIdAndEditStatus(OrderDataBase, intId, "Cancel")
+	err = FindIdAndEditStatus(OrderDataBase, intId, "Cancel")
 	if err.Error() == "Всё плохо!" {
 		fmt.Fprintf(w, "id is missing")
 	} else {
@@ -161,7 +160,7 @@ func CancelOrder(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func getBytesFromFile(name string) ([]byte, error) {
-	b := make([]byte, 0, 0)
+	b := make([]byte, 0)
 	file, err := os.OpenFile(name, os.O_RDWR, 0644)
 	if err != nil {
 		return b, err
@@ -176,7 +175,7 @@ func getBytesFromFile(name string) ([]byte, error) {
 	filesize := fileinfo.Size()
 
 	bytesFile := make([]byte, filesize)
-	_, err = file.Read(bytesFile)
+	_, _ = file.Read(bytesFile)
 	return bytesFile, nil
 }
 func writeTextInFile(name string, b []byte) error {
@@ -188,13 +187,13 @@ func writeTextInFile(name string, b []byte) error {
 	file.Write(b)
 	return nil
 }
-func findIdAndEditStatus(OrderDataBase []Order, intId int, statusOrder string) error {
+func FindIdAndEditStatus(OrderDataBase []Order, intId int, statusOrder string) error {
 
 	for i := 0; i < len(OrderDataBase); i++ {
 		if OrderDataBase[i].Id == intId {
 			OrderDataBase[i].Status = statusOrder
-			return fmt.Errorf("Всё хорошо!")
+			return fmt.Errorf("всё хорошо")
 		}
 	}
-	return fmt.Errorf("Всё плохо!")
+	return fmt.Errorf("всё плохо")
 }

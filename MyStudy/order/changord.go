@@ -9,7 +9,7 @@ func FindIdAndEditStatus(OrderDataBase []Order, intId int, statusOrder string) e
 	for i := 0; i < len(OrderDataBase); i++ {
 		if OrderDataBase[i].Id == intId {
 			OrderDataBase[i].Status = statusOrder
-			return fmt.Errorf("всё хорошо")
+			return fmt.Errorf("")
 		}
 	}
 	return fmt.Errorf("всё плохо")
